@@ -1,0 +1,18 @@
+@font-face {
+  font-family: PlayPretend; /* set name */
+  src: url("Play Pretend.otf"); /* url of the font */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+h1, p {
+  color:#FF0000;
+  font-family: PlayPretend;
+}
+
+canvas {
+  display: block;
+}
