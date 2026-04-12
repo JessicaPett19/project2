@@ -1,8 +1,18 @@
 // CREDITS
 
-// Win Screen Confetti Gif from viaductk on pixabay
+// Win Screen Confetti Gif by viaductk on pixabay
 // Font is Play Pretend by Chequered Ink on dafont.com
-// All other backgrounds/graphic assets by me
+
+// Target Hit Sound FX: https://www.youtube.com/watch?v=YNSbL-Cek1c
+// Special Target Hit Sound FX: https://www.youtube.com/watch?v=aqCxlxclyzo
+// Dummy Target SFX: https://www.youtube.com/watch?v=eWOQfJlIeMU
+// Applause SFX: https://www.youtube.com/watch?v=0mfJn604GT4
+
+// All other backgrounds/graphic assets by Jessica
+
+
+
+
 
 // VARIABLE SETUP
 
@@ -18,6 +28,10 @@ let evilSpecialTarget;
 let evilDuckyGif;
 let confettiImg;
 let crosshairImg;
+let targetHitSFX;
+let DuckQuack;
+let DummySFX;
+let ApplauseSFX;
 
 let gameOver = false;
 let gameOver2 = false;
@@ -27,10 +41,13 @@ let score2 = 0;
 let score3 = 0;
 let timeLeft1 = 60;
 let startTime1;
+let timer1
 let timeLeft2 = 60;
 let startTime2;
+let timer2;
 let startTime3 = 60;
 let timeLeft3;
+let timer3;
 enlarge = 0;
 let dummyTimer = 0;
 
@@ -43,6 +60,10 @@ function preload() {
   evilDuckyGif = loadImage("EVIL-DUCKY-GIF.gif");
   confettiImg = loadImage("viaductk-celebration-19390.gif")
   crosshairImg = loadImage("CROSSHAIR.png")
+  targetHitSFX = loadSound('Target Hit SFX.mp3');
+  DuckQuack = loadSound('Duck Quack.mp3');
+  DummySFX = loadSound('DummySFX.mp3');
+  ApplauseSFX = loadSound('Applause SFX.mp3');
 }
 
 function setup() {
@@ -98,6 +119,7 @@ function keyPressed() {
   
   if (state == "8" && keyIsDown(51)) {
     state = "10"; // SHORTCUT TO FINAL WIN SCREEN: Press 3
+    ApplauseSFX.play();
   }
 }
 
@@ -194,6 +216,8 @@ function startGame() {
   target.display();
   target.grow();
   
+  timer1 = (millis() - startTime1) / 1000;
+  
   if (score1 >= 60) {
     state = "4" 
   }
@@ -245,7 +269,7 @@ function spawnSpecialTarget() {
   }
 }
 
-// ALL OTHER STATE SWITCH LOGIC
+// STATE SWITCH & TARGET HIT LOGIC
 
 function mousePressed() {
   
@@ -255,6 +279,7 @@ function mousePressed() {
   if (state == "1") {
     state = "2";
     startTime1 = millis();
+    timer1 = millis() / 1000;
     score1 = 0;
     gameOver = false;
     specialTargetTimer = millis(); // Reset timer
@@ -264,6 +289,7 @@ function mousePressed() {
   else if (state == "3") {
     state = "2";
     startTime1 = millis();
+    timer1 = millis() / 1000;
     timeLeft1 = 60;
     score1 = 0;
     gameOver = false;
@@ -273,6 +299,7 @@ function mousePressed() {
   else if (state == "4") {
     state = "5";
     startTime2 = millis();
+    timer2 = millis() / 1000;
     score2 = 0;
     gameOver2 = false;
     specialTargetTimer = millis();
@@ -283,11 +310,13 @@ function mousePressed() {
     if (target && target.isHit(mouseX, mouseY)) {
       score1++;
       spawnTarget();
+      targetHitSFX.play();
     }
     if (specialTarget && specialTarget.isHit(mouseX, mouseY)) {
       score1 += 3;
       specialTarget = null;
       specialTargetTimer = millis();
+      DuckQuack.play();
     }
   }
 
@@ -296,11 +325,13 @@ function mousePressed() {
     if (target && target.isHit(mouseX, mouseY)) {
       score2++;
       spawnTarget();
+      targetHitSFX.play();
     }
     if (specialTarget && specialTarget.isHit(mouseX, mouseY)) {
       score2 += 3;
       specialTarget = null;
       specialTargetTimer = millis();
+      DuckQuack.play();
     }
   }
 
@@ -308,6 +339,7 @@ function mousePressed() {
   else if (state == "6") {
     state = "5";
     startTime2 = millis();
+    timer2 = millis() / 1000;
     score2 = 0;
     gameOver2 = false;
   }
@@ -317,6 +349,7 @@ function mousePressed() {
     state = "8";
     startTime3 = millis();
     score3 = 0;
+    timer3 = millis() / 1000;
     gameOver3 = false;
     specialTargetTimer = millis();
   }
@@ -327,6 +360,7 @@ function mousePressed() {
   if (target && target.isHit(mouseX, mouseY)) {
     score3++;
     spawnTarget();
+    targetHitSFX.play();
   }
   
   // Special/Dummy Target Logic
@@ -334,10 +368,12 @@ function mousePressed() {
   if (specialTarget instanceof DummyTarget) {
     specialTarget.isClicked = true; 
     dummyTimer = millis(); 
+    DummySFX.play();
   } else {
     score3 += 3;
     specialTarget = null;
     specialTargetTimer = millis();
+    DuckQuack.play();
   }
 }  
 }
@@ -346,6 +382,7 @@ function mousePressed() {
   else if (state == "9") {
     state = "8";
     startTime3 = millis();
+    timer3 = millis() / 1000;
     score3 = 0;
     gameOver3 = false;
     
@@ -529,7 +566,8 @@ function winScreen1() {
   fill(255);
   text("You shot things!", 133, 280);
   textSize(25);
-  text("Click to Start Next Round", 110,320);
+  text("Your time:" + nf(timer1, 1, 2) + "s", 190, 320);
+  text("Click to Start Next Round", 110,360);
 }
 
 function Round2() {
@@ -575,11 +613,13 @@ function Round2() {
   target.display();
   target.shrink();
   
+  timer2 = (millis() - startTime2) / 1000;
+  
   if (score2 >= 50) {
     state = "7" 
   }
   
-  enlarge = 30;
+  enlarge = 40;
   
   let specialElapsed = millis() - specialTargetTimer;
 
@@ -617,7 +657,8 @@ function winScreen2 () {
   fill(255);
   text("Sweet!", 220, 280);
   textSize(25);
-  text("Click to Start Next Round", 110,320);
+  text("Your time:" + nf(timer2, 1, 2) + "s", 190, 320);
+  text("Click to Start Next Round", 110,350);
 }
 
 function Round3() {
@@ -703,9 +744,12 @@ if (isTrapActive) {
     spawnSpecialTarget();
     specialTargetTimer = millis(); 
   }
+  
+  timer3 = (millis() - startTime3) / 1000;
 
   if (score3 >= 40) {
     state = "10" 
+    ApplauseSFX.play();
   }
   
   enlarge = 20;
@@ -737,5 +781,6 @@ function winScreen3 () {
   fill(255);
   text("You cleared all levels!", 35, 280);
   textSize(25);
-  text("Congrats!", 220,320);
+  text("Your time:" + nf(timer3, 1, 2) + "s", 180, 320);
+  text("Congrats!", 220,350);
 }
