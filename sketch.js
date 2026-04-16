@@ -1,6 +1,6 @@
 // CREDITS
 
-// Win Screen Confetti Gif by viaductk on pixabay
+// Final Win Screen Confetti Gif is by viaductk on pixabay
 // Font is Play Pretend by Chequered Ink on dafont.com
 
 // Target Hit Sound FX: https://www.youtube.com/watch?v=YNSbL-Cek1c
@@ -10,7 +10,7 @@
 
 // All other backgrounds/graphic assets by Jessica
 
-
+// Gemini helped with a few of the logic errors I was getting, as well as with some things I wasn't quite sure how to do. Sections where I received help are labelled.
 
 
 
@@ -22,7 +22,11 @@ let specialTargetTimer = 0;
 let state = 0;
 let pixelFont;
 let bgImg;
+let bgImgGreen;
+let bgImgBlue;
 let targetImg;
+let targetImgGreen;
+let targetImgBlue;
 let specialTargetImg;
 let evilSpecialTarget;
 let evilDuckyGif;
@@ -54,7 +58,11 @@ let dummyTimer = 0;
 function preload() {
   pixelFont = loadFont("Play Pretend.otf");
   bgImg = loadImage("GRID ASSET-01.png");
+  bgImgGreen = loadImage("GRID ASSET GREEN.png");
+  bgImgBlue = loadImage("GRID ASSET BLUE.png");
   targetImg = loadImage("TARGET.png");
+  targetImgGreen = loadImage("TARGET_GREEN.png");
+  targetImgBlue = loadImage("TARGET_BLUE.png");
   specialTargetImg = loadImage("RUBBER DUCKY.png");
   evilSpecialTarget = loadImage("EVIL DUCKY.png");
   evilDuckyGif = loadImage("EVIL-DUCKY-GIF.gif");
@@ -179,7 +187,7 @@ function startGame() {
   // ROUND 1 = STATE 2
   
   background(0);
-  image(bgImg, width / 2, height / 2, 600, 600);
+  image(bgImgGreen, width / 2, height / 2, 600, 600);
   
   noCursor();
   image(crosshairImg, mouseX, mouseY,30, 30);
@@ -409,7 +417,14 @@ class Target {
   display() {
     noStroke();
     fill(255);
+    
+    if (state == "2") {
+    image(targetImgGreen, this.x, this.y, this.w1+enlarge, this.h1+enlarge);
+    } else if (state == "5") {
+    image(targetImgBlue, this.x, this.y, this.w1+enlarge, this.h1+enlarge);
+    } else if (state == "8") {
     image(targetImg, this.x, this.y, this.w1+enlarge, this.h1+enlarge);
+    }
   }
   
   isHit(mx, my) {
@@ -575,7 +590,7 @@ function Round2() {
   // ROUND 2 = STATE 5
   
   background(0);
-  image(bgImg, width / 2, height / 2, 600, 600);
+  image(bgImgBlue, width / 2, height / 2, 600, 600);
 
   noCursor();
   image(crosshairImg, mouseX, mouseY,30, 30);
